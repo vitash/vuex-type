@@ -1,0 +1,27 @@
+{
+  "name": "vuex-type",
+  "version": "1.0.0",
+  "description": "vuex typescript module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitash/vuex-type.git"
+  },
+  "keywords": [
+    "vuex",
+    "typescript"
+  ],
+  "author": "vst",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vitash/vuex-type/issues"
+  },
+  "homepage": "https://github.com/vitash/vuex-type#readme",
+  "dependencies": {
+    "vue": "^2.6.11",
+    "vuex": "^3.4.0"
+  }
+}
