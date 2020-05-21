@@ -5,7 +5,7 @@ import Vue from "vue"
 import Vuex, { Store, ModuleTree } from "vuex"
 import { useSStore, rootGetters, Getters, storeModule, State, rootModules, } from "vuex-type"
 
-declare module 'vuex-type/index' {
+declare module 'vuex-type' {
     interface SStore<T> extends Store<T> {
         getters: ExtractGetters<typeof getters>
     }

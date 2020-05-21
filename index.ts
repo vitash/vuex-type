@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Store, MutationTree, GetterTree, ModuleTree, Commit, Dispatch } from 'vuex'
+import { Store, MutationTree, GetterTree, ModuleTree, Commit, Dispatch, CommitOptions, DispatchOptions, Module } from 'vuex'
 
 export function useSStore(store: Store<State>) {
     const dispatch_ = store.dispatch.bind(store)
@@ -7,7 +7,7 @@ export function useSStore(store: Store<State>) {
         if (arg.length === 1 && Array.isArray(arg[0])) {
             return (data: any) => dispatch_(arg[0].join('/'), data)
         }
-        (dispatch_ as any)(...arg)
+        return (dispatch_ as any)(...arg)
     } as any
 
     const commit_ = store.commit.bind(store)
@@ -15,7 +15,7 @@ export function useSStore(store: Store<State>) {
         if (arg.length === 1 && Array.isArray(arg[0])) {
             return (data: any) => commit_(arg[0].join('/'), data)
         }
-        (commit_ as any)(...arg)
+        return (commit_ as any)(...arg)
     } as any
 
     Vue.prototype.$$store = store
@@ -29,27 +29,32 @@ export function storeModule<
     >(key: ModuleKey, mod: {
         namespaced: true
         state: S,
-        mutations?: Mut,
-        actions?: Act,
+        mutations: Mut,
+        actions: Act,
         // modules?: ModuleTree<any> /** 类型推导不出来，QAQ */
     }) {
-    return (node: ModuleTree<any>) => {
-        node[key] = mod as any
+    return (node: Module<any, any>) => {
+        if (!!!node.modules) { node.modules = {} }
+        node.modules[key] = mod as any
         return mod
     }
 }
 
 // export type UseModule = (node: ModuleTree<any>) => any
-export function rootModules(root: ModuleTree<any>, ...mods: Array<(node: ModuleTree<any>) => any>) {
+export function rootModules(root: Module<any, any>, ...mods: Array<(node: Module<any, any>) => any>) {
     mods.forEach(m => m(root));
-    return root as StoreModules & ModuleTree<any>
+    return root as { [K in keyof StoreModules]: StoreModules[K] & { modules: ModuleTree<any> } }
 }
 
 // (state: State, getters: any) => any, 为什么第二个参数不使用 Getters 类型，因为会发生循环引用，求解 QAQ 。。。
-/** getters 不会对 Promise 解包，所以不要在 getters 里面写异步函数 */
-export function rootGetters<T extends Record<string, (state: State, getters: any) => any>>(getters: T) {
-    return getters
-}
+// export function rootGetters(getters: RecordGetters) {
+//     return getters
+// }
+
+// export function rootGetters3<T extends Array<(state: State, getters: Getters) => any>>(...gettersFn: T) {
+    
+//     return getters
+// }
 
 interface ActTree<Mkey extends ModulesKeys, S, State> {
     // actions 必须是异步函数，如果不是请放到 mutations
@@ -61,7 +66,7 @@ interface ActContext<Mkey extends ModulesKeys, S, R> {
     state: S;
     getters: any;
     rootState: R;
-    rootGetters: any; // Getters 会循环引用
+    rootGetters: Getters;
 }
 
 type ModulesFnKeys<K1 extends ModulesKeys, K2 extends keyof StoreModules[K1]> = keyof StoreModules[K1][K2]
@@ -77,8 +82,10 @@ type ModulesFn<
 export type ModulesKeys = keyof StoreModules
 export type RootState = { [K in ModulesKeys]: StoreModules[K]['state'] }
 export type State = ReadonlyDeep<RootState>
-export type Getters = SStore<State>['getters']
+type Getters = Readonly<SStore<State>['getters']>
+export type RecordGetters = { [K in keyof Getters]: (state: State, getters: Getters) => Getters[K] }
 
+/** getters 不会对 Promise 解包，所以不要在 getters 里面写异步函数 */
 export type ExtractGetters<G extends Record<keyof any, (...args: any) => any>> = { readonly [K in keyof G]: ReturnType<G[K]> }
 export type ReadonlyDeep<T> = { readonly [K in keyof T]: T[K] extends Object ? ReadonlyDeep<T[K]> : T[K] }
 // type PromiseUnwrap<T extends (...args: any) => any> = T extends (...arg: any[]) => Promise<infer U> ? U : ReturnType<T>
