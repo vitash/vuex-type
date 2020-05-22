@@ -1,6 +1,6 @@
 import Vue from "vue"
 import Vuex, { Store, ModuleTree, GetterTree } from "vuex"
-import { useSStore, storeModule, State, rootModules, RecordGetters, ExtractGetters, } from "./index"
+import { useSStore, storeModule, State, rootModules, GettersRecord, ExtractGetters, } from "./index"
 
 
 declare module './index' {
@@ -76,17 +76,16 @@ const aa = storeModule("aa", {
 })
 
 // in other files
-
 declare module './index' {
     interface SStore<T> extends Store<T> {
         getters: Getters
     }
 }
 interface Getters {
-    readonly ao_li_gei: number,
+    ao_li_gei: number,
     name: string
 }
-const getters: RecordGetters = {
+const getters: GettersRecord = {
     ao_li_gei(state, g) {
         return state.aa.count + 3
     },
@@ -101,10 +100,10 @@ const getters: RecordGetters = {
 // 不支持根节点添加 state，mutations，actions，必须使用命名空间
 
 // 为了兼容根节点 state，可以在第一个参数传入，根节点对象
-const modules = rootModules({}, ss, dd)
+const modules = rootModules({ss, dd, aa})
 
 // 为了兼容多层 module，可以手动添加，类型推导是没有的
-modules.dd.modules = { node20: {}, node21: {} }
+// modules.dd.modules = { node20: {}, node21: {} }
 
 export const store = new Vuex.Store({
     getters,

@@ -33,28 +33,18 @@ export function storeModule<
         actions: Act,
         // modules?: ModuleTree<any> /** 类型推导不出来，QAQ */
     }) {
-    return (node: Module<any, any>) => {
-        if (!!!node.modules) { node.modules = {} }
-        node.modules[key] = mod as any
+    return (node: ModuleTree<any>) => {
+        node[key] = mod as any
         return mod
     }
 }
 
 // export type UseModule = (node: ModuleTree<any>) => any
-export function rootModules(root: Module<any, any>, ...mods: Array<(node: Module<any, any>) => any>) {
-    mods.forEach(m => m(root));
-    return root as { [K in keyof StoreModules]: StoreModules[K] & { modules: ModuleTree<any> } }
+export function rootModules(mods: Record<ModulesKeys, (node: ModuleTree<any>) => any>) {
+    const root = {} as ModuleTree<any>
+    Object.entries(mods).forEach(([k, m]) => m(root))
+    return root as { [K in keyof StoreModules]: StoreModules[K] & { modules?: ModuleTree<any> } }
 }
-
-// (state: State, getters: any) => any, 为什么第二个参数不使用 Getters 类型，因为会发生循环引用，求解 QAQ 。。。
-// export function rootGetters(getters: RecordGetters) {
-//     return getters
-// }
-
-// export function rootGetters3<T extends Array<(state: State, getters: Getters) => any>>(...gettersFn: T) {
-    
-//     return getters
-// }
 
 interface ActTree<Mkey extends ModulesKeys, S, State> {
     // actions 必须是异步函数，如果不是请放到 mutations
@@ -83,7 +73,7 @@ export type ModulesKeys = keyof StoreModules
 export type RootState = { [K in ModulesKeys]: StoreModules[K]['state'] }
 export type State = ReadonlyDeep<RootState>
 type Getters = Readonly<SStore<State>['getters']>
-export type RecordGetters = { [K in keyof Getters]: (state: State, getters: Getters) => Getters[K] }
+export type GettersRecord = { [K in keyof Getters]: (state: State, getters: Getters) => Getters[K] }
 
 /** getters 不会对 Promise 解包，所以不要在 getters 里面写异步函数 */
 export type ExtractGetters<G extends Record<keyof any, (...args: any) => any>> = { readonly [K in keyof G]: ReturnType<G[K]> }
