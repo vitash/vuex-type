@@ -99,8 +99,7 @@ const getters: GettersRecord = {
 // 只能在根节点添加 getters
 // 不支持根节点添加 state，mutations，actions，必须使用命名空间
 
-// 为了兼容根节点 state，可以在第一个参数传入，根节点对象
-const modules = rootModules({ss, dd, aa})
+const modules = rootModules({ ss, dd, aa })
 
 // 为了兼容多层 module，可以手动添加，类型推导是没有的
 // modules.dd.modules = { node20: {}, node21: {} }

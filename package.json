@@ -15,13 +15,13 @@
     "typescript"
   ],
   "author": "vst",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/vitash/vuex-type/issues"
   },
   "homepage": "https://github.com/vitash/vuex-type#readme",
   "dependencies": {
-    "vue": "^2.6.11",
+    "vue": "^2.6.0",
     "vuex": "^3.4.0"
   }
 }

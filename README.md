@@ -1,5 +1,33 @@
 # vuex-type
 
+为 vuex 添加类型补充, 对原生的 vue 和 vuex 代码侵入较少，写法和原生的差不多。  
+为 vue 使用 store 提供类型覆盖，vuex 编写 module / state / getters 提供类型推导。  
+并不能完全推导出 vuex 的所有类型, 而且必须使用命名空间。能用，方便，还行吧。  
+
+## 使用例子
+
+### 编写 module
+![module.gif](https://github.com/vitash/vuex-type/assets/module.gif)
+
+### 编写 getters
+![getters.gif](https://github.com/vitash/vuex-type/assets/getters.gif)
+
+### Vue 组件内使用 Store
+![vue-components.gif](https://github.com/vitash/vuex-type/assets/vue-components.gif)
+
+## 类型补充：
+- state, 不需要声明 interface, 多层只读, 
+- getters, 需要声明 interface, 只支持顶层 getters, 不支持 module 里面添加 getters
+- commit / dispatch, 不需要声明 interface, 可以推导出二层命名空间, 参数, 返回值, 不支持多层 module
+- module, 提供编写时 module 本身的上下文类型: state / rootState / rootGetters / commit / dispatch
+
+## 类型推导的限制
+- 不支持顶层 state / actions / mutations
+- 不支持多层 module, 支持一层 module, 而且必须使用命名空间
+- 不支持在 module 添加 getters, 只能在根节点添加 getters
+- 本 module 内无法推导出其他 module 的 commit / dispatch 方法类型
+
+## 完整代码用例
 ``` typescript
 import Vue from "vue"
 import Vuex, { Store } from "vuex"
@@ -58,7 +86,7 @@ const dd = storeModule("dd", {
         async add({ commit }, nums: Promise<number[]>) {
             let total = (await nums).reduce((acc, n) => acc += n)
             commit("add", total)
-            // commit("ss/setName", { name: "ss", id: 0 }) // error, commit 到其他模块，目前无法推导
+            // commit("ss/setName", { name: "ss", id: 0 }) // error, commit 到其他模块, 目前无法推导
             commit("ss/setName" as any, { name: "ss", id: 0 }) // any 
         }
     }
@@ -85,7 +113,6 @@ declare module 'vuex-type' {
 interface Getters {
     ao_li_gei: number,
     name: string,
-    id: number
 }
 const getters: GettersRecord = {
     ao_li_gei(state, g) {
@@ -95,19 +122,17 @@ const getters: GettersRecord = {
     name({ ss, dd }, g) {
         return g.ao_li_gei + ss.name + dd.count
     },
-    id(state, g) { return g.ao_li_gei }
 }
 
-// 不支持多层 module，
-// 不支持在 module 添加 getters，命名空间的 getters 使用不方便：getters['account/profile']
+// 不支持多层 module, 
+// 不支持在 module 添加 getters, 命名空间的 getters 使用不方便：getters['account/profile']
 // 只能在根节点添加 getters
-// 不支持根节点添加 state，mutations，actions，必须使用命名空间
+// 不支持根节点添加 state, mutations, actions, 必须使用命名空间
 
-// 为了兼容根节点 state，可以在第一个参数传入，根节点对象
 const modules = rootModules({ ss, dd, aa })
 
-// 为了兼容多层 module，可以手动添加，类型推导是没有的
-modules.dd.modules = { node20: {}, node21: {} }
+// 为了兼容多层 module, 可以手动添加, 类型推导是没有的
+// modules.dd.modules = { node20: {}, node21: {} }
 
 Vue.use(Vuex)
 export const store = new Vuex.Store({
@@ -123,7 +148,7 @@ class VueTest extends Vue {
         return this.$$store.state.ss.nums
     }
     async fn1() {
-        // 有时候修改了 `actions`，`dispatch` 的类型推导不出来，请关掉 vs code 再打开
+        // 有时候修改了 `actions`, `dispatch` 的类型推导不出来, 请关掉 vs code 再打开
         const name = await this.$$store.dispatch(["ss", "setNumsAction"])([2, 3, 3,])
         this.$$store.commit(["ss", "setName"])({ name: "dd", id: 3 })
 

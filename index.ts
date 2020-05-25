@@ -47,8 +47,7 @@ export function rootModules(mods: Record<ModulesKeys, (node: ModuleTree<any>) =>
 }
 
 interface ActTree<Mkey extends ModulesKeys, S, State> {
-    // actions 必须是异步函数，如果不是请放到 mutations
-    [key: string]: (this: Store<State>, injectee: ActContext<Mkey, S, State>, payload?: any) => Promise<any>;
+    [key: string]: (this: Store<State>, injectee: ActContext<Mkey, S, State>, payload?: any) => any;
 }
 interface ActContext<Mkey extends ModulesKeys, S, R> {
     dispatch: <FnName extends ModulesFnKeys<Mkey, 'actions'>>(type: FnName, ...payload: Parameters<ModulesFn<Mkey, 'actions', FnName>>) => ReturnType<ModulesFn<Mkey, 'actions', FnName>>;
