@@ -25,7 +25,6 @@
 - 不支持顶层 state / actions / mutations
 - 不支持多层 module, 支持一层 module, 而且必须使用命名空间
 - 不支持在 module 添加 getters, 只能在根节点添加 getters
-- 本 module 内无法推导出其他 module 的 commit / dispatch 方法类型
 
 ## 完整代码用例
 ``` typescript
@@ -52,7 +51,7 @@ const ss = storeModule("ss", {
     },
     mutations: {
         setName(state, data: { name: string, id: number }) {
-            state.id = 2
+            state.id = data.id
             state.name = data.name
         },
         setNums(state, data: number[]) {
@@ -86,8 +85,9 @@ const dd = storeModule("dd", {
         async add({ commit }, nums: Promise<number[]>) {
             let total = (await nums).reduce((acc, n) => acc += n)
             commit("add", total)
-            // commit("ss/setName", { name: "ss", id: 0 }) // error, commit 到其他模块, 目前无法推导
-            commit("ss/setName" as any, { name: "ss", id: 0 }) // any 
+            // commit("ss/setName", { name: "ss", id: 0 }) // type error, commit 到其他模块, 目前无法推导
+            // commit("ss/setName" as any, { name: "ss", id: 0 }) // any ok
+            this.commit.commit(["ss", "setName"])({ name: "dd", id: 3 }) // ok
         }
     }
 })

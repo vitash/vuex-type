@@ -1,6 +1,6 @@
 {
   "name": "vuex-type",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "vuex typescript module",
   "main": "index.ts",
   "scripts": {
@@ -22,6 +22,6 @@
   "homepage": "https://github.com/vitash/vuex-type#readme",
   "dependencies": {
     "vue": "^2.6.0",
-    "vuex": "^3.4.0"
+    "vuex": "^3.0.0"
   }
 }
