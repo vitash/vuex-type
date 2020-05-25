@@ -7,13 +7,13 @@
 ## 使用例子
 
 ### 编写 module
-![module.gif](https://github.com/vitash/vuex-type/assets/module.gif)
+![module.gif](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/module.gif)
 
 ### 编写 getters
-![getters.gif](https://github.com/vitash/vuex-type/assets/getters.gif)
+![getters.gif](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/getters.gif)
 
 ### Vue 组件内使用 Store
-![vue-components.gif](https://github.com/vitash/vuex-type/assets/vue-components.gif)
+![vue-components.gif](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/vue-components.gif)
 
 ## 类型补充：
 - state, 不需要声明 interface, 多层只读, 
