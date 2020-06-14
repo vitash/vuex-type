@@ -40,6 +40,7 @@ export function storeModule<
 }
 
 // export type UseModule = (node: ModuleTree<any>) => any
+/** @param mods 如果这里报错，很可能是你忘了把某个 module 放进来了 */
 export function rootModules(mods: Record<ModulesKeys, (node: ModuleTree<any>) => any>) {
     const root = {} as ModuleTree<any>
     Object.entries(mods).forEach(([k, m]) => m(root))

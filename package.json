@@ -1,6 +1,6 @@
 {
   "name": "vuex-type",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "vuex typescript module",
   "main": "index.ts",
   "scripts": {
