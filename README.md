@@ -4,7 +4,7 @@
 为 vue 使用 store 提供类型覆盖，vuex 编写 module / state / getters 提供类型推导。  
 并不能完全推导出 vuex 的所有类型, 而且必须使用命名空间。能用，方便，还行吧。  
 
-[更罗嗦的介绍](https://github.com/vitash/vuex-type/blob/master/assets/introduction.md)
+[更罗嗦的介绍](https://github.com/vitash/vuex-type/blob/master/assets/Introduction.md)
 
 ## 使用例子
 

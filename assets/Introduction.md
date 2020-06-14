@@ -6,20 +6,20 @@
 编写起来和 Js 差不多，“成功的把 Ts 写成了 Js”，还有类型约束的那种。具体表现为不需要为 `state` 声明 interface，
 `commit` 自动推导出 `mutation` 的函数名，并且推导出参数和返回值。  
 ![module](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-module.gif)  
-![module-commit](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-module-commit.gif)  
-![module-state](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-module-state.gif)  
+![module-commit](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-module-commit.png)  
+![module-state](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-module-state.png)  
 ![module-merge](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-module-merge.gif)  
 把所有的 module 类型添加到 vuex-type 里面进行声明合并，只有这样才能使用类型推导，不然就报错了  
 ![module-MKey](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-module-MKey.gif)  
 
-欠缺：目前的类型推导必须使用命名空间，`module` 里面不能再嵌套 `module` 了，所以只能有一层 `module`。
+**欠缺：目前的类型推导必须使用命名空间，`module` 里面不能再嵌套 `module` 了，所以只能有一层 `module`。**
 
 ## 编写 getters
 `getters` 需要声明 interface，不能使用自动推导了，写起来还是很舒服的，类型提示都有。  
 ![getters](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/getters.gif)
 
-欠缺：目前只能再根节点添加 `getters` ，原 `Vuex` 是可以使用命名空间，而且在每个 `module` 都可以添加 `getters`，
-但我发现使用起来太麻烦，如：`getters['account/profile']`，这个还要手动拼接命名空间字符串，还是不支持的好，直接在根节点添加。
+**欠缺：目前只能再根节点添加 `getters` ，原 `Vuex` 是可以使用命名空间，而且在每个 `module` 都可以添加 `getters`，**
+**但我发现使用起来太麻烦，如：`getters['account/profile']`，这个还要手动拼接命名空间字符串，还是不支持得好，直接在根节点添加。**
 
 ## Vue 组件内的使用
 类型覆盖差不多了，`state`, `getters`, `commit`, `dispatch`，都是强类型的，有只读约束，调用参数和返回值提示。
@@ -32,9 +32,9 @@
 ![components-commit](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-components2.gif)  
 ![components-dipatch](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-components3.gif)
 
-欠缺：`commit`, `dispatch` 只能使用两层命名空间，这个是写死的元组类型 `[module_key, method_name]`，
-也就为什么只能使用一层 `module`，不能再嵌套多层 `module`。还有一个重要的问题：转到方法定义，
-这是一个重要的需求，但是 TypeScript 没有提供，通过函数参数可以跳过去，但是不能通过 `[module_key, method_name]` 这个字面量跳过去。  
+**欠缺：`commit`, `dispatch` 只能使用两层命名空间，这个是写死的元组类型 `[module_key, method_name]`，**
+**也就为什么只能使用一层 `module`，不能再嵌套多层 `module`。还有一个重要的问题：转到方法定义，**
+**这是一个重要的需求，但是 TypeScript 没有提供，通过函数参数可以跳过去，但是不能通过 `[module_key, method_name]` 这个字面量跳过去。**   
 ![method-goto-defintion](https://raw.githubusercontent.com/vitash/vuex-type/master/assets/i-method-goto-defintion.gif)
 
 ## 关于它
